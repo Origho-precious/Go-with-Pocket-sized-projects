@@ -6,3 +6,4 @@ func ExampleMain(){
 	// Output:
 	// Hello, World!
 }
+
