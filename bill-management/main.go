@@ -8,8 +8,7 @@ import (
 	"strings"
 )
 
-
-func getInput(prompt string, reader *bufio.Reader) (string, error){
+func getInput(prompt string, reader *bufio.Reader) (string, error) {
 	fmt.Print(prompt)
 
 	response, err := reader.ReadString('\n')
@@ -31,20 +30,19 @@ func createNewBill() bill {
 	return todaysBill
 }
 
-func handleItemAddition(b *bill, reader * bufio.Reader) {
+func handleItemAddition(b *bill, reader *bufio.Reader) {
 	itemName, _ := getInput("Item name: ", reader)
 	price, _ := getInput("Price ($) e.g 4.99: ", reader)
 
 	floatPrice, err := strconv.ParseFloat(price, 64)
-		
+
 	if err != nil {
 		fmt.Println("Price must be a number e.g 5.00, 4.99 etc")
 		handleUserActions(b)
-		return 
+		return
 	}
 
 	b.addItem(itemName, floatPrice)
-
 
 	fmt.Println("Item added successfully!", itemName, ":", price)
 	handleUserActions(b)
@@ -55,7 +53,7 @@ func saveBill(b *bill) {
 	b.saveBill()
 }
 
-func handleTipAddition(b *bill, reader * bufio.Reader) {
+func handleTipAddition(b *bill, reader *bufio.Reader) {
 	price, _ := getInput("Tip amount ($) e.g 4.55: ", reader)
 
 	floatPrice, err := strconv.ParseFloat(price, 64)
@@ -63,7 +61,7 @@ func handleTipAddition(b *bill, reader * bufio.Reader) {
 	if err != nil {
 		fmt.Println("Tip amount must be a number e.g 5.00, 4.99 etc")
 		handleUserActions(b)
-		return 
+		return
 	}
 
 	b.addTip(floatPrice)
@@ -80,19 +78,19 @@ func handleUserActions(b *bill) {
 	)
 
 	switch action {
-		case "a": 
-			handleItemAddition(b, reader)
-		case "s":
-			saveBill(b)
-		case "t":
-			handleTipAddition(b, reader)
-		default:
-			fmt.Println("Wrong option!", action)
-			handleUserActions(b)
+	case "a":
+		handleItemAddition(b, reader)
+	case "s":
+		saveBill(b)
+	case "t":
+		handleTipAddition(b, reader)
+	default:
+		fmt.Println("Wrong option!", action)
+		handleUserActions(b)
 	}
 }
 
-func main () {
+func main() {
 	todaysBill := createNewBill()
 	handleUserActions(&todaysBill)
 }

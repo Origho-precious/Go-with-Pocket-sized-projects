@@ -6,22 +6,20 @@ import (
 )
 
 type bill struct {
-	name string
-	items map[string]float64 
-	tip float64
+	name  string
+	items map[string]float64
+	tip   float64
 }
 
-
 func newBill(name string) bill {
-	newlyCreatedBill := bill {
-		name: name,
+	newlyCreatedBill := bill{
+		name:  name,
 		items: map[string]float64{},
-		tip: 0.0,
+		tip:   0.0,
 	}
 
 	return newlyCreatedBill
 }
-
 
 func (b *bill) format() string {
 	formattedString := fmt.Sprintf("Title: %v\n", b.name)
@@ -52,14 +50,14 @@ func (b *bill) addItem(itemName string, price float64) {
 
 	if !ok {
 		b.items[itemName] = price
-	}else {
+	} else {
 		b.items[itemName] = price + prevPrice
 	}
-	
+
 	// fmt.Println("UpdatedItems:", b.items)
 }
 
-func (b *bill) saveBill(){
+func (b *bill) saveBill() {
 	data := []byte(b.format())
 
 	filePath := fmt.Sprintf("bills/%v.txt", b.name)
