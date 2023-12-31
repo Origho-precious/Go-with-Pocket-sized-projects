@@ -22,8 +22,7 @@ func newBill(name string) bill {
 }
 
 func (b *bill) format() string {
-	formattedString := fmt.Sprintf("Title: %v\n", b.name)
-	formattedString += "\nBill breakdown: \n"
+	formattedString := "\nBill breakdown: \n"
 	var total float64 = 0.0
 
 	for itemName, amount := range b.items {
@@ -34,7 +33,7 @@ func (b *bill) format() string {
 	formattedString += fmt.Sprintf("%-15v $%0.2f\n\n", "tip:", b.tip)
 	total += b.tip
 
-	formattedString += fmt.Sprintf("%-15v $%0.2f", "total:", total)
+	formattedString += fmt.Sprintf("%-15v $%0.2f \n", "total:", total)
 
 	return formattedString
 }
@@ -62,11 +61,20 @@ func (b *bill) saveBill() {
 
 	filePath := fmt.Sprintf("bills/%v.txt", b.name)
 
-	err := os.WriteFile(filePath, data, 0644)
+	f, openError := os.OpenFile(
+		filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644,
+	)
 
-	if err != nil {
-		panic(err)
+	if openError != nil {
+		panic(openError)
 	}
 
-	fmt.Println("Bill was saved to file", filePath)
+	_, writeError := f.Write(data)
+
+	if writeError != nil {
+		f.Close()
+		panic(openError)
+	}
+
+	fmt.Println("Bill was saved to file:", filePath)
 }

@@ -1,8 +1,0 @@
-Title: Today
-
-Bill breakdown: 
-Dodo:           $2.99 
-Rice:           $1.99 
-tip:            $0.00
-
-total:          $4.98
