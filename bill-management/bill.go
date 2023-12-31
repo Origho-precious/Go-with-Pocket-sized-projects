@@ -22,7 +22,8 @@ func newBill(name string) bill {
 }
 
 func (b *bill) format() string {
-	formattedString := "\nBill breakdown: \n"
+	formattedString := "\n---------------------------- \n"
+	formattedString += "\nBill breakdown: \n"
 	var total float64 = 0.0
 
 	for itemName, amount := range b.items {
@@ -60,6 +61,12 @@ func (b *bill) saveBill() {
 	data := []byte(b.format())
 
 	filePath := fmt.Sprintf("bills/%v.txt", b.name)
+
+	err := os.MkdirAll("bills", 0755)
+
+	if err != nil{
+		panic(err)
+	}
 
 	f, openError := os.OpenFile(
 		filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644,
