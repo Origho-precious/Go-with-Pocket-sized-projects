@@ -1,14 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
 
-type TestCase struct {
+type LoadBookwormsTestCase struct {
 	bookwormsFile string 
 	want []Bookworm 
 	wantErr bool
+}
+
+type BooksCountTestCase struct {
+	bookCountMap map[Book]uint
+	want bool
 }
 
 var (
@@ -16,6 +22,20 @@ var (
 	oryxAndCrake  = Book{Author: "Margaret Atwood", Title: "Oryx and Crake"}
 	theBellJar    = Book{Author: "Sylvia Plath", Title: "The Bell Jar"}
 	janeEyre      = Book{Author: "Charlotte Brontë", Title: "Jane Eyre"}
+
+	testBookCount1 = map[Book]uint{
+		handmaidsTale: 2,
+		oryxAndCrake: 1,
+		theBellJar: 1,
+		janeEyre: 1,
+	}
+
+	testBookCount2 = map[Book]uint{
+		handmaidsTale: 1,
+		oryxAndCrake: 1,
+		theBellJar: 1,
+		janeEyre: 1,
+	}
 )
 
 func equalBooks(books, targetBooks []Book) bool {
@@ -54,8 +74,24 @@ func equalBookworms(bookworms, target []Bookworm) bool {
 	return true
 }
 
+func equalBooksCount(got, want map[Book]uint) bool {
+	if len(got) != len(want) {
+		return false
+	}
+
+	for book, targetCount := range want{
+		count, ok := got[book]
+
+		if !ok || count != targetCount {
+			return false
+		}
+	}
+
+	return true
+}
+
 func TestLoadBookworms(t *testing.T) {
-	tests := map[string] TestCase { 
+	tests := map[string] LoadBookwormsTestCase { 
 		"file exists": {
 			bookwormsFile: "testdata/bookworms.json",
 			want: []Bookworm{
@@ -96,5 +132,37 @@ func TestLoadBookworms(t *testing.T) {
 			if !reflect.DeepEqual(got, testCase.want) {
 				t.Fatalf("different result: got %v, expected %v", got, testCase.want) }
 			})
+	}
+}
+
+func TestBooksCount(t *testing.T) {
+	tests := map[string] BooksCountTestCase {
+		"Equal book count" : {
+			bookCountMap: testBookCount1,
+			want: true,
+		},
+		"unequal book count" : {
+			bookCountMap: testBookCount2,
+			want: false,
+		},
+	}
+
+
+	for name, testCase := range tests {
+		t.Run(name, func(t *testing.T) {
+			bookworms, err := loadBookworms("./testdata/bookworms.json")
+
+			if err != nil {
+				fmt.Println("Couldn't load file")
+			}
+
+			actualBooksCount := booksCount(bookworms)
+
+			got := equalBooksCount(actualBooksCount, testCase.bookCountMap)
+
+			if testCase.want != got {
+				t.Errorf("expected: %v, got: %v", testCase.want, got)
+			}
+		})
 	}
 }
