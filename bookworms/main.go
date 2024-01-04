@@ -17,4 +17,6 @@ func main() {
 
 	fmt.Println("Here are the books in common:")
 	displayBooks(commonBooks)
+
+	fmt.Println("Here are a few recommendations:")
 }
